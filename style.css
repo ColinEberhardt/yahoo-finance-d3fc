@@ -6,3 +6,7 @@ path.area {
 path.line {
   stroke: rgb(26, 154, 249);
 }
+
+.y-axis {
+  width: 1px !important;
+}

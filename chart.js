@@ -26,14 +26,14 @@ const areaSeries = fc
   .mainValue(d => d.high)
   .crossValue(d => d.date);
 
-const gridlines = fc.annotationSvgGridline().yTicks(5)
-    .xTicks(0);
+const gridlines = fc
+  .annotationSvgGridline()
+  .yTicks(5)
+  .xTicks(0);
 
-const multi = fc.seriesSvgMulti()
-  .series([gridlines, areaSeries, lineSeries]);
+const multi = fc.seriesSvgMulti().series([gridlines, areaSeries, lineSeries]);
 
 const xScale = d3.scaleTime();
-
 
 // use the extent component to determine the x and y domain
 const xExtent = fc.extentDate().accessors([d => d.date]);
@@ -42,14 +42,33 @@ const yExtent = fc.extentLinear().accessors([d => d.high, d => d.low]);
 
 const chart = fc
   .chartSvgCartesian(xScale, d3.scaleLinear())
-  .yOrient("left")
-  .plotArea(multi);
+  .yOrient("right")
+  .plotArea(multi)
+  .yTicks(5)
+  // https://github.com/d3/d3-axis/issues/32
+  .yTickSize(0.1)
+  .yDecorate(sel => {
+    sel
+      .enter()
+      .select("text")
+      .style("text-anchor", "end")
+      .attr("transform", "translate(-3, -8)");
+  })
+  .xDecorate(sel => {
+    sel
+      .enter()
+      .select("text")
+      .attr("dy", undefined)
+      .style("text-anchor", "start")
+      .style("dominant-baseline", "central")
+      .attr("transform", "translate(3, 10)");
+  });
 
 loadDataEndOfDay.then(data => {
   // set the domain based on the data
   chart.xDomain(xExtent(data)).yDomain(yExtent(data));
 
-  areaSeries.baseValue(d => yExtent(data)[0])
+  areaSeries.baseValue(d => yExtent(data)[0]);
 
   // select and render
   d3.select("#chart-element")
