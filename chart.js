@@ -33,15 +33,13 @@ const gridlines = fc
 
 const multi = fc.seriesSvgMulti().series([gridlines, areaSeries, lineSeries]);
 
-const xScale = d3.scaleTime();
-
 // use the extent component to determine the x and y domain
 const xExtent = fc.extentDate().accessors([d => d.date]);
 
 const yExtent = fc.extentLinear().accessors([d => d.high, d => d.low]);
 
 const chart = fc
-  .chartSvgCartesian(xScale, d3.scaleLinear())
+  .chartSvgCartesian(d3.scaleTime(), d3.scaleLinear())
   .yOrient("right")
   .plotArea(multi)
   .yTicks(5)
