@@ -11,10 +11,33 @@ const loadDataIntraday = d3.json("/yahoo.json").then(json => {
   }));
 });
 
+const dateFormat = d3.timeFormat("%a %H:%M%p");
+const priceFormat = d3.format(".2f");
+
 const loadDataEndOfDay = d3.csv("/yahoo.csv", d => {
   d.date = new Date(d.Timestamp * 1000);
+  d.volume = Number(d.volume);
   return d;
 });
+
+const volumeSeries = fc
+  .seriesSvgBar()
+  .bandwidth(3)
+  .crossValue(d => d.date)
+  .decorate(sel =>
+    sel
+      .enter()
+      .classed("volume", true)
+      .attr("fill", d => (d.open > d.close ? "red" : "green"))
+  );
+
+const movingAverageSeries = fc
+  .seriesSvgLine()
+  .mainValue(d => d.ma)
+  .crossValue(d => d.date)
+  .decorate(sel => {
+    sel.enter().classed("ema", true);
+  });
 
 const lineSeries = fc
   .seriesSvgLine()
@@ -31,17 +54,32 @@ const gridlines = fc
   .yTicks(5)
   .xTicks(0);
 
-const multi = fc.seriesSvgMulti().series([gridlines, areaSeries, lineSeries]);
+const multi = fc
+  .seriesSvgMulti()
+  .series([
+    gridlines,
+    areaSeries,
+    volumeSeries,
+    movingAverageSeries,
+    lineSeries
+  ]);
+
+const ma = fc.indicatorMovingAverage().value(d => d.open);
 
 // use the extent component to determine the x and y domain
 const xExtent = fc.extentDate().accessors([d => d.date]);
-
+const volumeExtent = fc
+  .extentLinear()
+  .pad([0, 2])
+  .accessors([d => d.volume]);
 const yExtent = fc.extentLinear().accessors([d => d.high, d => d.low]);
 
 const chart = fc
   .chartSvgCartesian(d3.scaleTime(), d3.scaleLinear())
   .yOrient("right")
   .plotArea(multi)
+  .xTickFormat(dateFormat)
+  .yTickFormat(priceFormat)
   .yTicks(5)
   // https://github.com/d3/d3-axis/issues/32
   .yTickSize(0.1)
@@ -63,13 +101,33 @@ const chart = fc
   });
 
 loadDataEndOfDay.then(data => {
-  // set the domain based on the data
-  chart.xDomain(xExtent(data)).yDomain(yExtent(data));
+  // compute the moving average data
+  const maData = ma(data);
 
-  areaSeries.baseValue(d => yExtent(data)[0]);
+  // merge into a single series
+  const mergedData = data.map((d, i) =>
+    Object.assign({}, d, {
+      ma: maData[i]
+    })
+  );
+
+  // set the domain based on the data
+  const xDomain = xExtent(data);
+  const yDomain = yExtent(data);
+  const volumeDomain = volumeExtent(data);
+
+  chart.xDomain(xDomain).yDomain(yDomain);
+
+  const volumeToPriceScale = d3
+    .scaleLinear()
+    .domain(volumeDomain)
+    .range(yDomain);
+  volumeSeries.mainValue(d => volumeToPriceScale(d.volume));
+
+  areaSeries.baseValue(d => yDomain[0]);
 
   // select and render
   d3.select("#chart-element")
-    .datum(data)
+    .datum(mergedData)
     .call(chart);
 });

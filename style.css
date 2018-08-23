@@ -7,6 +7,15 @@ path.line {
   stroke: rgb(26, 154, 249);
 }
 
+path.ema {
+  stroke: #c00;
+  fill: none;
+}
+
 .y-axis {
   width: 1px !important;
+}
+
+.volume {
+  opacity: 0.5;
 }
