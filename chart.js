@@ -17,10 +17,15 @@ const loadDataEndOfDay = d3.csv("/yahoo.csv", d => {
 });
 
 // an OHLC series, by default it expects the provided data to have open, low, high, close, date properties
-const ohlcSeries = fc
+const lineSeries = fc
   .seriesSvgLine()
   .mainValue(d => d.high)
   .crossValue(d => d.date);
+
+const gridlines = fc.annotationSvgGridline();
+
+const multi = fc.seriesSvgMulti()
+  .series([gridlines, lineSeries]);
 
 // adapt the d3 time scale to add discontinuities, so that weekends are removed
 const xScale = d3.scaleTime();
@@ -28,7 +33,7 @@ const xScale = d3.scaleTime();
 const chart = fc
   .chartSvgCartesian(xScale, d3.scaleLinear())
   .yOrient("left")
-  .plotArea(ohlcSeries);
+  .plotArea(multi);
 
 // use the extent component to determine the x and y domain
 const xExtent = fc.extentDate().accessors([d => d.date]);
