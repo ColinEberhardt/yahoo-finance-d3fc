@@ -16,35 +16,40 @@ const loadDataEndOfDay = d3.csv("/yahoo.csv", d => {
   return d;
 });
 
-// an OHLC series, by default it expects the provided data to have open, low, high, close, date properties
 const lineSeries = fc
   .seriesSvgLine()
   .mainValue(d => d.high)
   .crossValue(d => d.date);
 
-const gridlines = fc.annotationSvgGridline();
+const areaSeries = fc
+  .seriesSvgArea()
+  .mainValue(d => d.high)
+  .crossValue(d => d.date);
+
+const gridlines = fc.annotationSvgGridline().yTicks(5)
+    .xTicks(0);
 
 const multi = fc.seriesSvgMulti()
-  .series([gridlines, lineSeries]);
+  .series([gridlines, areaSeries, lineSeries]);
 
-// adapt the d3 time scale to add discontinuities, so that weekends are removed
 const xScale = d3.scaleTime();
 
-const chart = fc
-  .chartSvgCartesian(xScale, d3.scaleLinear())
-  .yOrient("left")
-  .plotArea(multi);
 
 // use the extent component to determine the x and y domain
 const xExtent = fc.extentDate().accessors([d => d.date]);
 
 const yExtent = fc.extentLinear().accessors([d => d.high, d => d.low]);
 
-loadDataEndOfDay.then(data => {
-  console.log(data);
+const chart = fc
+  .chartSvgCartesian(xScale, d3.scaleLinear())
+  .yOrient("left")
+  .plotArea(multi);
 
+loadDataEndOfDay.then(data => {
   // set the domain based on the data
   chart.xDomain(xExtent(data)).yDomain(yExtent(data));
+
+  areaSeries.baseValue(d => yExtent(data)[0])
 
   // select and render
   d3.select("#chart-element")

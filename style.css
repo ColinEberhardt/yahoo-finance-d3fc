@@ -1,0 +1,8 @@
+path.area {
+  fill: url(#area-gradient);
+  fill-opacity: 1;
+}
+
+path.line {
+  stroke: rgb(26, 154, 249);
+}
