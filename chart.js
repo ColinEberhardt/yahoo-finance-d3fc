@@ -17,6 +17,10 @@ const priceFormat = d3.format(".2f");
 const loadDataEndOfDay = d3.csv("/yahoo.csv", d => {
   d.date = new Date(d.Timestamp * 1000);
   d.volume = Number(d.volume);
+  d.high = Number(d.high);
+  d.low = Number(d.low);
+  d.open = Number(d.open);
+  d.close = Number(d.close);
   return d;
 });
 
@@ -54,6 +58,13 @@ const gridlines = fc
   .yTicks(5)
   .xTicks(0);
 
+const annotation = fc
+  .annotationSvgLine()
+  .label(d => priceFormat(d))
+  .decorate(function(sel) {
+    addCallout(sel);
+  });
+
 const multi = fc
   .seriesSvgMulti()
   .series([
@@ -61,18 +72,59 @@ const multi = fc
     areaSeries,
     volumeSeries,
     movingAverageSeries,
-    lineSeries
-  ]);
+    lineSeries,
+    annotation
+  ])
+  .mapping((data, index, series) => {
+    switch (series[index]) {
+      case annotation:
+        const lastPoint = data[data.length - 1];
+        return [lastPoint.high, lastPoint.ma];
+      default:
+        return data;
+    }
+  });
 
-const ma = fc.indicatorMovingAverage().value(d => d.open);
+const ma = fc.indicatorMovingAverage().value(d => d.high);
+
+function calloutPathData(width, height) {
+  var h2 = height / 2;
+  return [[0, 0], [h2, -h2], [width, -h2], [width, h2], [h2, h2], [0, 0]];
+}
+
+function addCallout(sel) {
+  const calloutWidth = 50,
+    calloutHeight = 15,
+    calloutLeftMargin = 10,
+    yAxisWidth = 50;
+
+  sel
+    .enter()
+    .select(".right-handle")
+    .classed("callout", true)
+    .insert("path", ":first-child")
+    .attr("transform", "translate(-" + calloutWidth + ", 0)")
+    .attr("d", d3.area()(calloutPathData(calloutWidth, calloutHeight)));
+
+  sel
+    .enter()
+    .select("text")
+    .attr("x", -35);
+}
 
 // use the extent component to determine the x and y domain
-const xExtent = fc.extentDate().accessors([d => d.date]);
+const xExtent = fc
+  .extentDate()
+  .pad([0, 0.05])
+  .accessors([d => d.date]);
 const volumeExtent = fc
   .extentLinear()
   .pad([0, 2])
   .accessors([d => d.volume]);
-const yExtent = fc.extentLinear().accessors([d => d.high, d => d.low]);
+const yExtent = fc
+  .extentLinear()
+  .pad([0.1, 0.1])
+  .accessors([d => d.high, d => d.low]);
 
 const chart = fc
   .chartSvgCartesian(d3.scaleTime(), d3.scaleLinear())

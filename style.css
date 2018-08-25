@@ -19,3 +19,21 @@ path.ema {
 .volume {
   opacity: 0.5;
 }
+
+.annotation-line line {
+  display: none;
+}
+
+.annotation-line:nth-child(2) .callout path {
+  fill: #c00;
+}
+
+.annotation-line:nth-child(1) .callout path {
+  fill: rgb(26, 154, 249);
+}
+
+.callout text {
+  font-size: 10px;
+  font-family: sans-serif;
+  fill: white;
+}

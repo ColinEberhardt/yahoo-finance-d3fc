@@ -1,8 +1,16 @@
 <!doctype html>
-<script src="node_modules/d3/dist/d3.js"></script>
-<script src="node_modules/d3fc/build/d3fc.js"></script>
-
+<head>
+  <script src="node_modules/d3/dist/d3.js"></script>
+  <script src="node_modules/d3fc/build/d3fc.js"></script>
+  <script src="node_modules/d3-svg-legend/d3-legend.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
 <div id="chart-element"  style="height: 500px"></div>
+
+<div id='container'>
+  <svg id='legend'></svg>
+</div>
 
 <svg id='time-series' style='height: 300px; width: 500px;'>
   <defs>
@@ -14,7 +22,5 @@
     </linearGradient>
   </defs>
 </svg>
-
-<link rel="stylesheet" type="text/css" href="style.css"/>
-
 <script src="chart.js"></script>
+</body>
