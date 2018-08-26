@@ -37,3 +37,12 @@ path.ema {
   font-family: sans-serif;
   fill: white;
 }
+
+.legend-item {
+  font-size: 12px;
+  font-family: sans-serif;
+}
+
+text:nth-child(1) {
+  text-anchor: end;
+}

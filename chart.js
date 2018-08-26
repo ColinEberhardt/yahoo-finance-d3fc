@@ -24,6 +24,31 @@ const loadDataEndOfDay = d3.csv("/yahoo.csv", d => {
   return d;
 });
 
+const legend = () => {
+  const join = fc.dataJoin("g", "legend-item");
+
+  const instance = selection => {
+    selection.each((data, selectionIndex, nodes) => {
+      const g = join(d3.select(nodes[selectionIndex]), data);
+      g.attr("transform", (_, i) => "translate(30, " + (i + 1) * 15 + ")");
+      g.enter()
+        .append("text")
+        .text(d => d.name)
+        .attr("transform", "translate(20, 0)")
+        .classed("label", true);
+      g.enter()
+        .append("text")
+        .text(d => d.value)
+        .attr("transform", "translate(30, 0)")
+        .classed("value", true);
+    });
+  };
+
+  instance.xScale = () => instance;
+  instance.yScale = () => instance;
+  return instance;
+};
+
 const volumeSeries = fc
   .seriesSvgBar()
   .bandwidth(3)
@@ -65,6 +90,8 @@ const annotation = fc
     addCallout(sel);
   });
 
+const chartLegend = legend();
+
 const multi = fc
   .seriesSvgMulti()
   .series([
@@ -73,13 +100,19 @@ const multi = fc
     volumeSeries,
     movingAverageSeries,
     lineSeries,
-    annotation
+    annotation,
+    chartLegend
   ])
   .mapping((data, index, series) => {
+    const lastPoint = data[data.length - 1];
     switch (series[index]) {
       case annotation:
-        const lastPoint = data[data.length - 1];
         return [lastPoint.high, lastPoint.ma];
+      case chartLegend:
+        return ["open", "high", "low", "close"].map(key => ({
+          name: key,
+          value: priceFormat(lastPoint[key])
+        }));
       default:
         return data;
     }
@@ -87,6 +120,7 @@ const multi = fc
 
 const ma = fc.indicatorMovingAverage().value(d => d.high);
 
+// TODO: componentise
 function calloutPathData(width, height) {
   var h2 = height / 2;
   return [[0, 0], [h2, -h2], [width, -h2], [width, h2], [h2, h2], [0, 0]];
@@ -137,14 +171,12 @@ const chart = fc
   .yTickSize(0.1)
   .yDecorate(sel => {
     sel
-      .enter()
       .select("text")
       .style("text-anchor", "end")
       .attr("transform", "translate(-3, -8)");
   })
   .xDecorate(sel => {
     sel
-      .enter()
       .select("text")
       .attr("dy", undefined)
       .style("text-anchor", "start")
@@ -158,7 +190,7 @@ loadDataEndOfDay.then(data => {
 
   // merge into a single series
   const mergedData = data.map((d, i) =>
-    Object.assign({}, d, {
+    Object.assign(d, {
       ma: maData[i]
     })
   );
