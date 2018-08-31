@@ -24,31 +24,6 @@ const loadDataEndOfDay = d3.csv("/yahoo.csv", d => {
   return d;
 });
 
-const legend = () => {
-  const join = fc.dataJoin("g", "legend-item");
-
-  const instance = selection => {
-    selection.each((data, selectionIndex, nodes) => {
-      const g = join(d3.select(nodes[selectionIndex]), data);
-      g.attr("transform", (_, i) => "translate(30, " + (i + 1) * 15 + ")");
-      g.enter()
-        .append("text")
-        .text(d => d.name)
-        .attr("transform", "translate(20, 0)")
-        .classed("label", true);
-      g.enter()
-        .append("text")
-        .text(d => d.value)
-        .attr("transform", "translate(30, 0)")
-        .classed("value", true);
-    });
-  };
-
-  instance.xScale = () => instance;
-  instance.yScale = () => instance;
-  return instance;
-};
-
 const volumeSeries = fc
   .seriesSvgBar()
   .bandwidth(3)
@@ -87,7 +62,12 @@ const annotation = fc
   .annotationSvgLine()
   .label(d => priceFormat(d))
   .decorate(function(sel) {
-    addCallout(sel);
+    sel
+      .enter()
+      .select(".right-handle")
+      .append("g")
+      .attr("transform", "translate(-50, 0)")
+      .call(callout());
   });
 
 const chartLegend = legend();
@@ -119,32 +99,6 @@ const multi = fc
   });
 
 const ma = fc.indicatorMovingAverage().value(d => d.high);
-
-// TODO: componentise
-function calloutPathData(width, height) {
-  var h2 = height / 2;
-  return [[0, 0], [h2, -h2], [width, -h2], [width, h2], [h2, h2], [0, 0]];
-}
-
-function addCallout(sel) {
-  const calloutWidth = 50,
-    calloutHeight = 15,
-    calloutLeftMargin = 10,
-    yAxisWidth = 50;
-
-  sel
-    .enter()
-    .select(".right-handle")
-    .classed("callout", true)
-    .insert("path", ":first-child")
-    .attr("transform", "translate(-" + calloutWidth + ", 0)")
-    .attr("d", d3.area()(calloutPathData(calloutWidth, calloutHeight)));
-
-  sel
-    .enter()
-    .select("text")
-    .attr("x", -35);
-}
 
 // use the extent component to determine the x and y domain
 const xExtent = fc
