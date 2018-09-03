@@ -1,5 +1,5 @@
 const callout = () => selection => {
-  const width = 50,
+  const width = 40,
     height = 15,
     h2 = height / 2;
 
@@ -27,7 +27,7 @@ const callout = () => selection => {
       .enter()
       .append("text")
       .classed("callout", true)
-      .attr("transform", "translate(12, " + h2 + ")")
+      .attr("transform", "translate(" + (width - 3) + ", 0)")
       .text(d => d3.format(".2f")(d));
   });
 };

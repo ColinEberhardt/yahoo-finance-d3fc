@@ -66,11 +66,13 @@ const annotation = fc
       .enter()
       .select(".right-handle")
       .append("g")
-      .attr("transform", "translate(-50, 0)")
+      .attr("transform", "translate(-40, 0)")
       .call(callout());
   });
 
 const chartLegend = legend();
+
+const crosshair = fc.annotationSvgCrosshair();
 
 const multi = fc
   .seriesSvgMulti()
@@ -81,18 +83,22 @@ const multi = fc
     movingAverageSeries,
     lineSeries,
     annotation,
-    chartLegend
+    chartLegend,
+    crosshair
   ])
   .mapping((data, index, series) => {
     const lastPoint = data[data.length - 1];
+    const legendValue = data.crosshair.length ? data.crosshair[0].value : lastPoint;
     switch (series[index]) {
       case annotation:
         return [lastPoint.high, lastPoint.ma];
       case chartLegend:
         return ["open", "high", "low", "close"].map(key => ({
           name: key,
-          value: priceFormat(lastPoint[key])
+          value: priceFormat(legendValue[key])
         }));
+      case crosshair:
+        return data.crosshair;
       default:
         return data;
     }
@@ -103,7 +109,7 @@ const ma = fc.indicatorMovingAverage().value(d => d.high);
 // use the extent component to determine the x and y domain
 const xExtent = fc
   .extentDate()
-  .pad([0, 0.05])
+  .pad([0, 0.035])
   .accessors([d => d.date]);
 const volumeExtent = fc
   .extentLinear()
@@ -114,8 +120,10 @@ const yExtent = fc
   .pad([0.1, 0.1])
   .accessors([d => d.high, d => d.low]);
 
+const xScale = d3.scaleTime();
+const yScale = d3.scaleLinear();
 const chart = fc
-  .chartSvgCartesian(d3.scaleTime(), d3.scaleLinear())
+  .chartSvgCartesian(xScale, yScale)
   .yOrient("right")
   .plotArea(multi)
   .xTickFormat(dateFormat)
@@ -138,6 +146,17 @@ const chart = fc
       .attr("transform", "translate(3, 10)");
   });
 
+const closest = (arr, fn) =>
+  arr.reduce(
+    (acc, value, index) =>
+      fn(value) < acc.distance ? { distance: fn(value), index, value } : acc,
+    {
+      distance: Number.MAX_VALUE,
+      index: 0,
+      value: arr[0]
+    }
+  );
+
 loadDataEndOfDay.then(data => {
   // compute the moving average data
   const maData = ma(data);
@@ -148,6 +167,7 @@ loadDataEndOfDay.then(data => {
       ma: maData[i]
     })
   );
+  mergedData.crosshair = [];
 
   // set the domain based on the data
   const xDomain = xExtent(data);
@@ -164,8 +184,30 @@ loadDataEndOfDay.then(data => {
 
   areaSeries.baseValue(d => yDomain[0]);
 
-  // select and render
-  d3.select("#chart-element")
-    .datum(mergedData)
-    .call(chart);
+  const render = () => {
+    // select and render
+    d3.select("#chart-element")
+      .datum(mergedData)
+      .call(chart);
+
+    const pointer = fc.pointer().on("point", event => {
+      if (event.length) {
+        const xValue = xScale.invert(event[0].x);
+        const close = closest(mergedData, d => Math.abs(xValue - d.date));
+        mergedData.crosshair = [
+          {
+            x: xScale(close.value.date),
+            y: yScale(close.value.high),
+            value: close.value
+          }
+        ];
+      } else {
+        mergedData.crosshair = [];
+      }
+      render();
+    });
+
+    d3.select("#chart-element .plot-area").call(pointer);
+  };
+  render();
 });

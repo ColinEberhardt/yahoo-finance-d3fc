@@ -20,7 +20,7 @@ path.ema {
   opacity: 0.5;
 }
 
-.annotation-line line {
+.annotation-line.horizontal line {
   display: none;
 }
 
@@ -38,11 +38,18 @@ path.ema {
   fill: white;
 }
 
-.legend-item {
+.legend-value {
   font-size: 12px;
   font-family: sans-serif;
 }
 
-text:nth-child(1) {
+.legend-label {
+  text-anchor: end;
+  font-size: 12px;
+  font-family: sans-serif;
+}
+
+text.callout {
+  dominant-baseline: central;
   text-anchor: end;
 }
