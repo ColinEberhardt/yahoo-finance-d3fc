@@ -87,7 +87,9 @@ const multi = fc
   ])
   .mapping((data, index, series) => {
     const lastPoint = data[data.length - 1];
-    const legendValue = data.crosshair.length ? data.crosshair[0].value : lastPoint;
+    const legendValue = data.crosshair.length
+      ? data.crosshair[0].value
+      : lastPoint;
     switch (series[index]) {
       case annotation:
         return [lastPoint.high, lastPoint.ma];
@@ -119,7 +121,7 @@ const yExtent = fc
   .pad([0.1, 0.1])
   .accessors([d => d.high, d => d.low]);
 
-const xScale = d3.scaleTime();
+const xScale = fc.scaleDiscontinuous(d3.scaleTime());
 const yScale = d3.scaleLinear();
 const chart = fc
   .chartSvgCartesian(xScale, yScale)
@@ -156,7 +158,13 @@ const closest = (arr, fn) =>
     }
   );
 
-loadDataEndOfDay.then(data => {
+loadDataIntraday.then(data => {
+  // select a subset of data
+  data = data
+    .slice(0, 600)
+    // filter out any data that is > 2 hours outside of trading
+    .filter(d => d.date.getHours() > 7 && d.date.getHours() < 19);
+
   // compute the moving average data
   const maData = ma(data);
 
@@ -167,6 +175,9 @@ loadDataEndOfDay.then(data => {
     })
   );
   mergedData.crosshair = [];
+
+  const discontinuities = tradedHours().trades(data.map(d => d.date));
+  xScale.discontinuityProvider(discontinuities);
 
   // set the domain based on the data
   const xDomain = xExtent(data);
@@ -191,8 +202,9 @@ loadDataEndOfDay.then(data => {
 
     const pointer = fc.pointer().on("point", event => {
       if (event.length) {
-        const xValue = xScale.invert(event[0].x);
-        const close = closest(mergedData, d => Math.abs(xValue - d.date));
+        const close = closest(mergedData, d =>
+          Math.abs(event[0].x - xScale(d.date))
+        );
         mergedData.crosshair = [
           {
             x: xScale(close.value.date),
