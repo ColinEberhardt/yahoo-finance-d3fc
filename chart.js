@@ -11,18 +11,17 @@ const loadDataIntraday = d3.json("/yahoo.json").then(json => {
   }));
 });
 
+const loadDataEndOfDay = d3.csv("/yahoo.csv", d => ({
+  date: new Date(d.Timestamp * 1000),
+  volume: Number(d.volume),
+  high: Number(d.high),
+  low: Number(d.low),
+  open: Number(d.open),
+  close: Number(d.close)
+}));
+
 const dateFormat = d3.timeFormat("%a %H:%M%p");
 const priceFormat = d3.format(".2f");
-
-const loadDataEndOfDay = d3.csv("/yahoo.csv", d => {
-  d.date = new Date(d.Timestamp * 1000);
-  d.volume = Number(d.volume);
-  d.high = Number(d.high);
-  d.low = Number(d.low);
-  d.open = Number(d.open);
-  d.close = Number(d.close);
-  return d;
-});
 
 const volumeSeries = fc
   .seriesSvgBar()
