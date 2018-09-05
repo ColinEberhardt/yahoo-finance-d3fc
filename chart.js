@@ -110,7 +110,6 @@ const ma = fc.indicatorMovingAverage().value(d => d.high);
 // use the extent component to determine the x and y domain
 const xExtent = fc
   .extentDate()
-  .pad([0, 0.035])
   .accessors([d => d.date]);
 const volumeExtent = fc
   .extentLinear()
@@ -161,7 +160,7 @@ const closest = (arr, fn) =>
 loadDataIntraday.then(data => {
   // select a subset of data
   data = data
-    .slice(0, 600)
+    .slice(0, 680)
     // filter out any data that is > 2 hours outside of trading
     .filter(d => d.date.getHours() > 7 && d.date.getHours() < 19);
 

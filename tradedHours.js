@@ -1,9 +1,9 @@
 tradedHours = () => {
-  var tradedHours = {};
-  var trades = [];
-  var orderedExtents = [];
-  var extentsMappedByDay = {};
-  var millisPerDay = 1000 * 60 * 60 * 24;
+  const tradedHours = {};
+  let trades = [];
+  let orderedExtents = [];
+  const extentsMappedByDay = {};
+  const millisPerDay = 1000 * 60 * 60 * 24;
 
   function last(array) {
     return array.length === 0 ? undefined : array[array.length - 1];
@@ -14,13 +14,13 @@ tradedHours = () => {
   }
 
   function sameDay(d1, d2) {
-    var d11 = Math.floor(d1 / millisPerDay);
-    var d22 = Math.floor(d2 / millisPerDay);
+    const d11 = Math.floor(d1 / millisPerDay);
+    const d22 = Math.floor(d2 / millisPerDay);
     return d11 === d22;
   }
 
   function isWithinTradingHours(date) {
-    var extents = getTradingExtentsForDay(date);
+    const extents = getTradingExtentsForDay(date);
     if (extents) {
       return extents.start <= date && date < extents.end;
     } else {
@@ -33,7 +33,7 @@ tradedHours = () => {
   }
 
   tradedHours.distance = function(startDate, endDate) {
-    var millis = 0;
+    let millis = 0;
 
     if (sameDay(startDate, endDate)) {
       if (!isWithinTradingHours(startDate)) {
@@ -46,7 +46,7 @@ tradedHours = () => {
     }
 
     // compute the number of trading ms in the start and end days
-    var startDayExtents = getTradingExtentsForDay(startDate);
+    const startDayExtents = getTradingExtentsForDay(startDate);
     if (startDayExtents) {
       if (startDate <= startDayExtents.start) {
         millis += startDayExtents.duration;
@@ -55,7 +55,7 @@ tradedHours = () => {
       }
     }
 
-    var endDayExtents = getTradingExtentsForDay(endDate);
+    const endDayExtents = getTradingExtentsForDay(endDate);
     if (endDayExtents) {
       if (endDate > endDayExtents.end) {
         millis += endDayExtents.duration;
@@ -65,9 +65,9 @@ tradedHours = () => {
     }
 
     // add the time for all the days inbetween
-    var afterStart = d3.timeDay.ceil(startDate);
-    var beforeEnd = d3.timeDay.floor(endDate);
-    var daysInBetween = orderedExtents.filter(function(d) {
+    const afterStart = d3.timeDay.ceil(startDate);
+    const beforeEnd = d3.timeDay.floor(endDate);
+    const daysInBetween = orderedExtents.filter(function(d) {
       return afterStart < d.start && beforeEnd > d.end;
     });
     millis += d3.sum(daysInBetween, function(d) {
@@ -82,7 +82,7 @@ tradedHours = () => {
   };
 
   tradedHours.clampUp = function(date) {
-    var extents = getTradingExtentsForDay(date);
+    const extents = getTradingExtentsForDay(date);
 
     function clampToNextTradingDay() {
       if (date > last(orderedExtents).end) {
@@ -90,7 +90,7 @@ tradedHours = () => {
         return date;
       } else {
         // otherwise find the start of trading on the next active day
-        var futureDates = orderedExtents.filter(function(d) {
+        const futureDates = orderedExtents.filter(function(d) {
           return d.start > date;
         });
         return first(futureDates).start;
@@ -111,7 +111,7 @@ tradedHours = () => {
   };
 
   tradedHours.clampDown = function(date) {
-    var extents = getTradingExtentsForDay(date);
+    const extents = getTradingExtentsForDay(date);
 
     function clampToPreviousTradingDay() {
       if (date < first(orderedExtents).start) {
@@ -119,7 +119,7 @@ tradedHours = () => {
         return date;
       } else {
         // otherwise find the end of trading on the previous active day
-        var earlierDates = orderedExtents.filter(function(d) {
+        const earlierDates = orderedExtents.filter(function(d) {
           return d.end < date;
         });
         return last(earlierDates).end;
@@ -154,7 +154,7 @@ tradedHours = () => {
     trades = x;
 
     // sort the trades
-    var sortedTrades = x.slice();
+    const sortedTrades = x.slice();
     sortedTrades.sort(function(a, b) {
       return a - b;
     });
@@ -162,7 +162,7 @@ tradedHours = () => {
     // compute the extents for each day
     orderedExtents = [];
     sortedTrades.forEach(function(date) {
-      var lastExtents = last(orderedExtents);
+      const lastExtents = last(orderedExtents);
       if (lastExtents && sameDay(lastExtents.start, date)) {
         lastExtents.end = date;
         lastExtents.duration =
@@ -177,7 +177,7 @@ tradedHours = () => {
     });
 
     orderedExtents.forEach(function(extent) {
-      var key = Math.floor(extent.start / millisPerDay);
+      const key = Math.floor(extent.start / millisPerDay);
       extentsMappedByDay[key] = extent;
     });
 
