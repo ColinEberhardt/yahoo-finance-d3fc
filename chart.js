@@ -82,6 +82,8 @@ const multi = fc
     movingAverageSeries,
     lineSeries,
     annotation,
+    // TODO: adding legend to the plot area via multi-series, probably
+    // easier with the grid layout chart
     chartLegend,
     crosshair
   ])

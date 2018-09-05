@@ -1,28 +1,15 @@
 const legend = () => {
+  const labelJoin = fc.dataJoin("text", "legend-label");
+  const valueJoin = fc.dataJoin("text", "legend-value");
+
   const instance = selection => {
     selection.each((data, selectionIndex, nodes) => {
-      const label = d3
-        .select(nodes[selectionIndex])
-        .selectAll("text.legend-label")
-        .data(data);
-      label
-        .enter()
-        .append("text")
-        .classed("legend-label", true)
+      labelJoin(d3.select(nodes[selectionIndex]), data)
         .attr("transform", (_, i) => "translate(50, " + (i + 1) * 15 + ")")
-        .merge(label)
         .text(d => d.name);
 
-      const value = d3
-        .select(nodes[selectionIndex])
-        .selectAll("text.legend-value")
-        .data(data);
-      value
-        .enter()
-        .append("text")
-        .classed("legend-value", true)
+      valueJoin(d3.select(nodes[selectionIndex]), data)
         .attr("transform", (_, i) => "translate(60, " + (i + 1) * 15 + ")")
-        .merge(value)
         .text(d => d.value);
     });
   };
