@@ -24,7 +24,13 @@ path.ema {
   display: none;
 }
 
+.annotation-line.vertical text {
+  display: none;
+}
 
+.annotation-band.vertical {
+  opacity: 0.05;
+}
 .volume {
   opacity: 0.5;
 }

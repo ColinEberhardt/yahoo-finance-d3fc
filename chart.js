@@ -69,6 +69,15 @@ const annotation = fc
       .call(callout());
   });
 
+const verticalAnnotation = fc.annotationSvgLine().orient("vertical");
+
+const bands = fc
+  .annotationSvgBand()
+  .orient("vertical")
+  .fromValue(d => d[0][2])
+  .toValue(d => d[1][1]);
+
+
 const chartLegend = legend();
 
 const crosshair = fc.annotationSvgCrosshair();
@@ -85,7 +94,9 @@ const multi = fc
     // TODO: adding legend to the plot area via multi-series, probably
     // easier with the grid layout chart
     chartLegend,
-    crosshair
+    crosshair,
+    verticalAnnotation,
+    bands
   ])
   .mapping((data, index, series) => {
     const lastPoint = data[data.length - 1];
@@ -102,6 +113,10 @@ const multi = fc
         }));
       case crosshair:
         return data.crosshair;
+      case verticalAnnotation:
+        return [].concat.apply([], data.tradingHourMarkers);
+      case bands:
+        return d3.pairs(data.tradingHourMarkers);
       default:
         return data;
     }
@@ -110,9 +125,7 @@ const multi = fc
 const ma = fc.indicatorMovingAverage().value(d => d.high);
 
 // use the extent component to determine the x and y domain
-const xExtent = fc
-  .extentDate()
-  .accessors([d => d.date]);
+const xExtent = fc.extentDate().accessors([d => d.date]);
 const volumeExtent = fc
   .extentLinear()
   .pad([0, 2])
@@ -134,9 +147,7 @@ const chart = fc
   // https://github.com/d3/d3-axis/issues/32
   .yTickSize(40)
   .yDecorate(sel => {
-    sel
-      .select("text")
-      .attr("transform", "translate(10, -8)");
+    sel.select("text").attr("transform", "translate(10, -8)");
   })
   .xDecorate(sel => {
     sel
@@ -178,6 +189,16 @@ loadDataIntraday.then(data => {
 
   const discontinuities = tradedHours().trades(data.map(d => d.date));
   xScale.discontinuityProvider(discontinuities);
+
+  const tradingHourMarkers = discontinuities.orderedExtents().map(extent => {
+    let close = d3.timeDay.floor(extent.start);
+    let open = d3.timeDay.floor(extent.start);
+    open.setHours(9);
+    open.setMinutes(30);
+    close.setHours(16);
+    return [extent.start, open, close];
+  });
+  mergedData.tradingHourMarkers = tradingHourMarkers;
 
   // set the domain based on the data
   const xDomain = xExtent(data);
