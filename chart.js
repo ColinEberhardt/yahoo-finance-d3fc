@@ -132,12 +132,11 @@ const chart = fc
   .yTickFormat(priceFormat)
   .yTicks(5)
   // https://github.com/d3/d3-axis/issues/32
-  .yTickSize(0.1)
+  .yTickSize(40)
   .yDecorate(sel => {
     sel
       .select("text")
-      .style("text-anchor", "end")
-      .attr("transform", "translate(-3, -8)");
+      .attr("transform", "translate(10, -8)");
   })
   .xDecorate(sel => {
     sel

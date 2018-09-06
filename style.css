@@ -13,8 +13,17 @@ path.ema {
 }
 
 .y-axis {
-  width: 1px !important;
+  width: 40px !important;
 }
+
+.y-axis .tick path {
+  stroke: #bbb !important;
+}
+
+.y-axis .domain {
+  display: none;
+}
+
 
 .volume {
   opacity: 0.5;
