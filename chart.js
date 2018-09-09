@@ -40,9 +40,7 @@ const movingAverageSeries = fc
   .seriesSvgLine()
   .mainValue(d => d.ma)
   .crossValue(d => d.date)
-  .decorate(sel => {
-    sel.enter().classed("ema", true);
-  });
+  .decorate(sel => sel.enter().classed("ema", true));
 
 const lineSeries = fc
   .seriesSvgLine()
@@ -62,14 +60,14 @@ const gridlines = fc
 const annotation = fc
   .annotationSvgLine()
   .label(d => priceFormat(d))
-  .decorate(function(sel) {
+  .decorate((sel) =>
     sel
       .enter()
       .select(".right-handle")
       .append("g")
       .attr("transform", "translate(-40, 0)")
       .call(callout());
-  });
+  );
 
 const verticalAnnotation = fc.annotationSvgLine().orient("vertical");
 
@@ -116,7 +114,9 @@ const multi = fc
         return ["open", "high", "low", "close", "date"].map(key => ({
           name: key,
           value:
-            key !== "date" ? priceFormat(legendValue[key]) : dateFormat(legendValue[key])
+            key !== "date"
+              ? priceFormat(legendValue[key])
+              : dateFormat(legendValue[key])
         }));
       case crosshair:
         return data.crosshair;
@@ -155,17 +155,17 @@ const chart = fc
   .yTicks(5)
   // https://github.com/d3/d3-axis/issues/32
   .yTickSize(40)
-  .yDecorate(sel => {
-    sel.select("text").attr("transform", "translate(10, -8)");
-  })
-  .xDecorate(sel => {
+  .yDecorate(sel => 
+    sel.select("text").attr("transform", "translate(10, -8)")
+  )
+  .xDecorate(sel => 
     sel
       .select("text")
       .attr("dy", undefined)
       .style("text-anchor", "start")
       .style("dominant-baseline", "central")
-      .attr("transform", "translate(3, 10)");
-  });
+      .attr("transform", "translate(3, 10)")
+  );
 
 const closest = (arr, fn) =>
   arr.reduce(
@@ -191,12 +191,10 @@ const tradingHours = dates => {
     }
     return acc;
   }, {});
-
   return Object.keys(tradingHours).map(d => tradingHours[d]);
 };
 
 loadDataIntraday.then(data => {
-  // select a subset of data
   data = data
     .slice(0, 600)
     // filter out any data that is > 2 hours outside of trading
@@ -206,11 +204,7 @@ loadDataIntraday.then(data => {
   const maData = ma(data);
 
   // merge into a single series
-  const mergedData = data.map((d, i) =>
-    Object.assign(d, {
-      ma: maData[i]
-    })
-  );
+  const mergedData = data.map((d, i) => ({ ma: maData[i], ...d }));
   mergedData.crosshair = [];
 
   const tradingHoursArray = tradingHours(data.map(d => d.date));
@@ -224,11 +218,10 @@ loadDataIntraday.then(data => {
   mergedData.tradingHoursArray = tradingHoursArray;
 
   // set the domain based on the data
-  const xDomain = xExtent(data);
   const yDomain = yExtent(data);
   const volumeDomain = volumeExtent(data);
 
-  chart.xDomain(xDomain).yDomain(yDomain);
+  chart.xDomain(xExtent(data)).yDomain(yDomain);
 
   const volumeToPriceScale = d3
     .scaleLinear()
@@ -263,7 +256,7 @@ loadDataIntraday.then(data => {
       render();
     });
 
-    d3.select("#chart-element d3fc-svg.plot-area").call(pointer);
+    d3.select("#chart-element .plot-area").call(pointer);
   };
   render();
 });
