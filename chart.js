@@ -20,12 +20,14 @@ const loadDataEndOfDay = d3.csv("/yahoo.csv", d => ({
   close: Number(d.close)
 }));
 
+const flatten = arr => [].concat.apply([], arr);
+
 const dateFormat = d3.timeFormat("%a %H:%M%p");
 const priceFormat = d3.format(".2f");
 
 const volumeSeries = fc
   .seriesSvgBar()
-  .bandwidth(3)
+  .bandwidth(2)
   .crossValue(d => d.date)
   .decorate(sel =>
     sel
@@ -74,13 +76,17 @@ const verticalAnnotation = fc.annotationSvgLine().orient("vertical");
 const bands = fc
   .annotationSvgBand()
   .orient("vertical")
-  .fromValue(d => d[0][2])
-  .toValue(d => d[1][1]);
-
+  .fromValue(d => d[0][1])
+  .toValue(d => d[1][0]);
 
 const chartLegend = legend();
 
 const crosshair = fc.annotationSvgCrosshair();
+
+const exchangeOpening = day => [
+  new Date(day.getFullYear(), day.getMonth(), day.getDate(), 9, 30, 0),
+  new Date(day.getFullYear(), day.getMonth(), day.getDate(), 16, 0, 0)
+];
 
 const multi = fc
   .seriesSvgMulti()
@@ -107,16 +113,19 @@ const multi = fc
       case annotation:
         return [lastPoint.high, lastPoint.ma];
       case chartLegend:
-        return ["open", "high", "low", "close"].map(key => ({
+        return ["open", "high", "low", "close", "date"].map(key => ({
           name: key,
-          value: priceFormat(legendValue[key])
+          value:
+            key !== "date" ? priceFormat(legendValue[key]) : dateFormat(legendValue[key])
         }));
       case crosshair:
         return data.crosshair;
       case verticalAnnotation:
-        return [].concat.apply([], data.tradingHourMarkers);
+        return flatten(
+          data.tradingHoursArray.map(d => [d[0], ...exchangeOpening(d[0])])
+        );
       case bands:
-        return d3.pairs(data.tradingHourMarkers);
+        return d3.pairs(data.tradingHoursArray.map(d => exchangeOpening(d[0])));
       default:
         return data;
     }
@@ -169,10 +178,27 @@ const closest = (arr, fn) =>
     }
   );
 
+const getDateKey = date =>
+  date.getMonth() + "-" + date.getDate() + "-" + date.getFullYear();
+
+const tradingHours = dates => {
+  const tradingHours = dates.reduce((acc, curr) => {
+    const dateKey = getDateKey(curr);
+    if (!acc.hasOwnProperty(dateKey)) {
+      acc[dateKey] = [curr, curr];
+    } else {
+      acc[dateKey][1] = curr;
+    }
+    return acc;
+  }, {});
+
+  return Object.keys(tradingHours).map(d => tradingHours[d]);
+};
+
 loadDataIntraday.then(data => {
   // select a subset of data
   data = data
-    .slice(0, 680)
+    .slice(0, 600)
     // filter out any data that is > 2 hours outside of trading
     .filter(d => d.date.getHours() > 7 && d.date.getHours() < 19);
 
@@ -187,18 +213,15 @@ loadDataIntraday.then(data => {
   );
   mergedData.crosshair = [];
 
-  const discontinuities = tradedHours().trades(data.map(d => d.date));
-  xScale.discontinuityProvider(discontinuities);
+  const tradingHoursArray = tradingHours(data.map(d => d.date));
 
-  const tradingHourMarkers = discontinuities.orderedExtents().map(extent => {
-    let close = d3.timeDay.floor(extent.start);
-    let open = d3.timeDay.floor(extent.start);
-    open.setHours(9);
-    open.setMinutes(30);
-    close.setHours(16);
-    return [extent.start, open, close];
-  });
-  mergedData.tradingHourMarkers = tradingHourMarkers;
+  const discontinuities = d3
+    .pairs(tradingHoursArray)
+    .map(d => [d[0][1], d[1][0]]);
+
+  xScale.discontinuityProvider(fc.discontinuityRange(...discontinuities));
+
+  mergedData.tradingHoursArray = tradingHoursArray;
 
   // set the domain based on the data
   const xDomain = xExtent(data);
@@ -223,8 +246,9 @@ loadDataIntraday.then(data => {
 
     const pointer = fc.pointer().on("point", event => {
       if (event.length) {
+        const pointerDate = xScale.invert(event[0].x);
         const close = closest(mergedData, d =>
-          Math.abs(event[0].x - xScale(d.date))
+          Math.abs(pointerDate.getTime() - d.date.getTime())
         );
         mergedData.crosshair = [
           {
@@ -239,7 +263,7 @@ loadDataIntraday.then(data => {
       render();
     });
 
-    d3.select("#chart-element .plot-area").call(pointer);
+    d3.select("#chart-element d3fc-svg.plot-area").call(pointer);
   };
   render();
 });

@@ -68,3 +68,7 @@ text.callout {
   dominant-baseline: central;
   text-anchor: end;
 }
+
+d3fc-canvas {
+  pointer-events: none;
+}
