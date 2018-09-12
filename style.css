@@ -39,15 +39,15 @@ path.ema {
   display: none;
 }
 
-.annotation-line:nth-child(2) .right-handle path {
+path.callout:nth-child(2) {
   fill: #c00;
 }
 
-.annotation-line:nth-child(1) .right-handle path {
+path.callout:nth-child(1) {
   fill: rgb(26, 154, 249);
 }
 
-.annotation-line text {
+text.callout {
   font-size: 10px;
   font-family: sans-serif;
   fill: white;

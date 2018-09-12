@@ -20,7 +20,6 @@ const loadDataEndOfDay = d3.csv("/yahoo.csv", d => ({
   close: Number(d.close)
 }));
 
-
 const exchangeOpening = day => [
   new Date(day.getFullYear(), day.getMonth(), day.getDate(), 9, 30, 0),
   new Date(day.getFullYear(), day.getMonth(), day.getDate(), 16, 0, 0)
@@ -91,17 +90,15 @@ const gridlines = fc
   .yTicks(5)
   .xTicks(0);
 
-const annotation = fc
-  .annotationSvgLine()
-  .label(d => priceFormat(d))
-  .decorate(sel =>
-    sel
-      .enter()
-      .select(".right-handle")
-      .append("g")
-      .attr("transform", "translate(-40, 0)")
-      .call(callout())
-  );
+const annotation = fc.annotationSvgLine().label(d => priceFormat(d));
+// .decorate(sel =>
+//   sel
+//     .enter()
+//     .select(".right-handle")
+//     .append("g")
+//     .attr("transform", "translate(-40, 0)")
+//     .call(callout())
+// );
 
 const verticalAnnotation = fc.annotationSvgLine().orient("vertical");
 
@@ -114,7 +111,6 @@ const bands = fc
 const chartLegend = legend();
 
 const crosshair = fc.annotationSvgCrosshair();
-
 
 const multi = fc
   .seriesSvgMulti()
@@ -176,10 +172,13 @@ const yExtent = fc
 
 const xScale = fc.scaleDiscontinuous(d3.scaleTime());
 const yScale = d3.scaleLinear();
+
+const yCallout = callout().scale(yScale);
+
 const chart = fc
-  .chartSvgCartesian(xScale, yScale)
+  .chartCartesian(xScale, yScale)
   .yOrient("right")
-  .plotArea(multi)
+  .svgPlotArea(multi)
   .xTickFormat(dateFormat)
   .yTickFormat(priceFormat)
   .yTicks(5)
@@ -193,11 +192,24 @@ const chart = fc
       .style("text-anchor", "start")
       .style("dominant-baseline", "central")
       .attr("transform", "translate(3, 10)")
+  )
+  .decorate(selection =>
+    selection
+      .enter()
+      .append("d3fc-svg")
+      .style("grid-column", 4)
+      .style("grid-row", 3)
+      .style("width", "3em")
+      .on("draw.callout", (data, selectionIndex, nodes) => {
+        d3.select(nodes[selectionIndex])
+          .select("svg")
+          .call(yCallout);
+      })
   );
 
 loadDataIntraday.then(data => {
   data = data
-    .slice(0, 600)
+    .slice(0, 537)
     // filter out any data that is > 2 hours outside of trading
     .filter(d => d.date.getHours() > 7 && d.date.getHours() < 19);
 
