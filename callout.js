@@ -6,14 +6,18 @@ const callout = () => {
       height = 15,
       h2 = height / 2;
 
-    const calloutJoin = fc.dataJoin("path", "callout");
-    const labelJoin = fc.dataJoin("text", "callout");
+    const calloutJoin = fc.dataJoin("g", "callout");
 
     selection.each((data, selectionIndex, nodes) => {
       const lastPoint = data[data.length - 1];
       const calloutData = [lastPoint.high, lastPoint.ma];
 
-      calloutJoin(d3.select(nodes[selectionIndex]), calloutData)
+      const element = calloutJoin(d3.select(nodes[selectionIndex]), calloutData)
+        .attr("transform", d => "translate(0, " + scale(d) + ")");
+
+      element
+        .enter()
+        .append("path")
         .attr(
           "d",
           d3.area()([
@@ -24,11 +28,15 @@ const callout = () => {
             [h2, h2],
             [0, 0]
           ])
-        )
-        .attr("transform", d => "translate(0, " + scale(d) + ")");
+        );
 
-      labelJoin(d3.select(nodes[selectionIndex]), calloutData)
-        .attr("transform", d => "translate(" + (width - 3) + ", " + scale(d) + ")")
+      element
+        .enter()
+        .append("text")
+        .attr(
+          "transform",
+          d => "translate(" + (width - 3) + ", 0)"
+        )
         .text(d => d3.format(".2f")(d));
     });
   };

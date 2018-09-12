@@ -209,7 +209,7 @@ const chart = fc
 
 loadDataIntraday.then(data => {
   data = data
-    .slice(0, 537)
+    .slice(0, 700)
     // filter out any data that is > 2 hours outside of trading
     .filter(d => d.date.getHours() > 7 && d.date.getHours() < 19);
 
