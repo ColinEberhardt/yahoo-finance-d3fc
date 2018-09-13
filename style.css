@@ -12,12 +12,8 @@ path.ema {
   fill: none;
 }
 
-.y-axis {
-  width: 40px !important;
-}
-
 .y-axis .tick path {
-  stroke: #bbb !important;
+  stroke: #bbb;
 }
 
 .y-axis .domain {
@@ -31,12 +27,9 @@ path.ema {
 .annotation-band.vertical {
   opacity: 0.05;
 }
+
 .volume {
   opacity: 0.5;
-}
-
-.annotation-line.horizontal line {
-  display: none;
 }
 
 .callout:nth-child(2) path {
@@ -64,11 +57,6 @@ path.ema {
   text-anchor: end;
   font-size: 12px;
   font-family: sans-serif;
-}
-
-text.callout {
-  dominant-baseline: central;
-  text-anchor: end;
 }
 
 d3fc-canvas {

@@ -9,11 +9,15 @@ const callout = () => {
     const calloutJoin = fc.dataJoin("g", "callout");
 
     selection.each((data, selectionIndex, nodes) => {
+      // this component is tightly coupled to the shape of the input data, extracting
+      // this high and moving average values from the last datapoint
       const lastPoint = data[data.length - 1];
       const calloutData = [lastPoint.high, lastPoint.ma];
 
-      const element = calloutJoin(d3.select(nodes[selectionIndex]), calloutData)
-        .attr("transform", d => "translate(0, " + scale(d) + ")");
+      const element = calloutJoin(
+        d3.select(nodes[selectionIndex]),
+        calloutData
+      ).attr("transform", d => `translate(0, ${scale(d)})`);
 
       element
         .enter()
@@ -33,10 +37,7 @@ const callout = () => {
       element
         .enter()
         .append("text")
-        .attr(
-          "transform",
-          d => "translate(" + (width - 3) + ", 0)"
-        )
+        .attr("transform", `translate(${width - 3}, 0)`)
         .text(d => d3.format(".2f")(d));
     });
   };

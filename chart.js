@@ -20,43 +20,16 @@ const loadDataEndOfDay = d3.csv("/yahoo.csv", d => ({
   close: Number(d.close)
 }));
 
-const exchangeOpening = day => [
-  new Date(day.getFullYear(), day.getMonth(), day.getDate(), 9, 30, 0),
-  new Date(day.getFullYear(), day.getMonth(), day.getDate(), 16, 0, 0)
-];
-
-const tradingHours = dates => {
-  const getDateKey = date =>
-    date.getMonth() + "-" + date.getDate() + "-" + date.getFullYear();
-
-  const tradingHours = dates.reduce((acc, curr) => {
-    const dateKey = getDateKey(curr);
-    if (!acc.hasOwnProperty(dateKey)) {
-      acc[dateKey] = [curr, curr];
-    } else {
-      acc[dateKey][1] = curr;
-    }
-    return acc;
-  }, {});
-
-  return Object.keys(tradingHours).map(d => tradingHours[d]);
-};
-
-const closest = (arr, fn) =>
-  arr.reduce(
-    (acc, value, index) =>
-      fn(value) < acc.distance ? { distance: fn(value), index, value } : acc,
-    {
-      distance: Number.MAX_VALUE,
-      index: 0,
-      value: arr[0]
-    }
-  );
-
-const flatten = arr => [].concat.apply([], arr);
-
 const dateFormat = d3.timeFormat("%a %H:%M%p");
 const priceFormat = d3.format(".2f");
+
+const legendData = datum => [
+  { name: "open", value: priceFormat(datum.open) },
+  { name: "high", value: priceFormat(datum.high) },
+  { name: "low", value: priceFormat(datum.low) },
+  { name: "close", value: priceFormat(datum.close) },
+  { name: "time", value: dateFormat(datum.date) }
+];
 
 const volumeSeries = fc
   .seriesSvgBar()
@@ -90,16 +63,6 @@ const gridlines = fc
   .yTicks(5)
   .xTicks(0);
 
-const annotation = fc.annotationSvgLine().label(d => priceFormat(d));
-// .decorate(sel =>
-//   sel
-//     .enter()
-//     .select(".right-handle")
-//     .append("g")
-//     .attr("transform", "translate(-40, 0)")
-//     .call(callout())
-// );
-
 const verticalAnnotation = fc.annotationSvgLine().orient("vertical");
 
 const bands = fc
@@ -120,7 +83,6 @@ const multi = fc
     volumeSeries,
     movingAverageSeries,
     lineSeries,
-    annotation,
     // TODO: adding legend to the plot area via multi-series, probably
     // easier with the grid layout chart
     chartLegend,
@@ -134,24 +96,18 @@ const multi = fc
       ? data.crosshair[0].value
       : lastPoint;
     switch (series[index]) {
-      case annotation:
-        return [lastPoint.high, lastPoint.ma];
       case chartLegend:
-        return ["open", "high", "low", "close", "date"].map(key => ({
-          name: key,
-          value:
-            key !== "date"
-              ? priceFormat(legendValue[key])
-              : dateFormat(legendValue[key])
-        }));
+        return legendData(legendValue);
       case crosshair:
         return data.crosshair;
       case verticalAnnotation:
         return flatten(
-          data.tradingHoursArray.map(d => [d[0], ...exchangeOpening(d[0])])
+          data.tradingHoursArray.map(d => [d[0], ...exchangeOpeningHours(d[0])])
         );
       case bands:
-        return d3.pairs(data.tradingHoursArray.map(d => exchangeOpening(d[0])));
+        return d3.pairs(
+          data.tradingHoursArray.map(d => exchangeOpeningHours(d[0]))
+        );
       default:
         return data;
     }
