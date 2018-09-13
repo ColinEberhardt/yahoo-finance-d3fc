@@ -24,8 +24,19 @@ path.ema {
   display: none;
 }
 
+.annotation-line.vertical {
+  stroke: #444;
+  stroke-width: 2px;
+  stroke-dasharray: 3, 3;
+}
+
 .annotation-band.vertical {
-  opacity: 0.05;
+  opacity: 0.04;
+}
+
+.annotation-crosshair .annotation-line.horizontal,
+.annotation-crosshair .annotation-line.vertical {
+  display: none;
 }
 
 .volume {

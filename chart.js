@@ -83,8 +83,6 @@ const multi = fc
     volumeSeries,
     movingAverageSeries,
     lineSeries,
-    // TODO: adding legend to the plot area via multi-series, probably
-    // easier with the grid layout chart
     chartLegend,
     crosshair,
     verticalAnnotation,
@@ -115,26 +113,33 @@ const multi = fc
 
 const ma = fc.indicatorMovingAverage().value(d => d.high);
 
-// use the extent component to determine the x and y domain
 const xExtent = fc.extentDate().accessors([d => d.date]);
+
 const volumeExtent = fc
   .extentLinear()
   .pad([0, 2])
   .accessors([d => d.volume]);
+
 const yExtent = fc
   .extentLinear()
   .pad([0.1, 0.1])
   .accessors([d => d.high, d => d.low]);
 
 const xScale = fc.scaleDiscontinuous(d3.scaleTime());
+
 const yScale = d3.scaleLinear();
 
 const yCallout = callout().scale(yScale);
+
+const xTickFilter = d3.timeMinute
+  .every(30)
+  .filter(d => d.getHours() === 9 && d.getMinutes() === 30);
 
 const chart = fc
   .chartCartesian(xScale, yScale)
   .yOrient("right")
   .svgPlotArea(multi)
+  .xTicks(xTickFilter)
   .xTickFormat(dateFormat)
   .yTickFormat(priceFormat)
   .yTicks(5)
@@ -149,8 +154,8 @@ const chart = fc
       .style("dominant-baseline", "central")
       .attr("transform", "translate(3, 10)")
   )
-  .decorate(selection =>
-    selection
+  .decorate(sel =>
+    sel
       .enter()
       .append("d3fc-svg")
       .style("grid-column", 4)
@@ -176,6 +181,7 @@ loadDataIntraday.then(data => {
   const mergedData = data.map((d, i) => ({ ma: maData[i], ...d }));
   mergedData.crosshair = [];
 
+  // compute the trading hours and use this to create our discontinuous scale
   const tradingHoursArray = tradingHours(data.map(d => d.date));
 
   const discontinuities = d3
@@ -189,9 +195,10 @@ loadDataIntraday.then(data => {
   // set the domain based on the data
   const yDomain = yExtent(data);
   const volumeDomain = volumeExtent(data);
-
   chart.xDomain(xExtent(data)).yDomain(yDomain);
 
+  // map the volume scale to the price - a cunning way to use the price
+  // scale for our volume series!
   const volumeToPriceScale = d3
     .scaleLinear()
     .domain(volumeDomain)
