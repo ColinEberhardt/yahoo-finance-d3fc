@@ -74,6 +74,11 @@ const verticalAnnotation = fc
       .append("use")
       .attr("transform", "translate(0, -20)")
       .attr("xlink:href", d => d.type);
+    sel
+      .enter()
+      .select(".bottom-handle")
+      .append("circle")
+      .attr("r", 3);
   });
 
 const bands = fc
