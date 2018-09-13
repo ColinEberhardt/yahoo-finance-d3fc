@@ -1,4 +1,5 @@
 body {
+  /* https://stackoverflow.com/a/12070436/249933 */
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
   font-weight: 300;
 }
@@ -17,12 +18,22 @@ path.ema {
   fill: none;
 }
 
-.y-axis .tick path {
+.bottom-axis {
+  height: 20px !important;
+}
+
+.y-axis .tick path,
+.x-axis .tick path {
   stroke: #bbb;
 }
 
-.y-axis .domain {
+.y-axis .domain,
+.x-axis .domain {
   display: none;
+}
+
+.x-axis text {
+  font-weight: bold;
 }
 
 .annotation-line.vertical text {

@@ -141,6 +141,7 @@ const chart = fc
   .svgPlotArea(multi)
   .xTicks(xTickFilter)
   .xTickFormat(dateFormat)
+  .xTickSize(20)
   .yTickFormat(priceFormat)
   .yTicks(5)
   // https://github.com/d3/d3-axis/issues/32
