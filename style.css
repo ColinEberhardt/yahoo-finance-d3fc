@@ -89,13 +89,8 @@ d3fc-canvas {
   pointer-events: none;
 }
 
-.plot-area, .y-axis {
-  border-bottom: 1px solid #bbb;
-  border-top: 1px solid #bbb;
-}
-.plot-area {
-  border-left: 1px solid #bbb;
-}
-.y-axis {
-  /* border-right: 1px solid black; */
+.border {
+  border: 1px solid #bbb;
+  grid-column: 3 / 5;
+  grid-row: 3;
 }

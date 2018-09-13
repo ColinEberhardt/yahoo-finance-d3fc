@@ -178,7 +178,7 @@ const chart = fc
       .style("dominant-baseline", "central")
       .attr("transform", "translate(3, 10)")
   )
-  .decorate(sel =>
+  .decorate(sel => {
     sel
       .enter()
       .append("d3fc-svg")
@@ -189,8 +189,11 @@ const chart = fc
         d3.select(nodes[selectionIndex])
           .select("svg")
           .call(yCallout);
-      })
-  );
+      });
+    sel.enter()
+      .append("div")
+      .classed("border", true);
+  });
 
 loadDataIntraday.then(data => {
   data = data
