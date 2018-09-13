@@ -17,7 +17,7 @@ const callout = () => {
       const element = calloutJoin(
         d3.select(nodes[selectionIndex]),
         calloutData
-      ).attr("transform", d => `translate(0, ${scale(d)})`);
+      ).attr("transform", d => `translate(7, ${scale(d)})`);
 
       element
         .enter()

@@ -71,7 +71,7 @@ path.ema {
   font-size: 10px;
   fill: white;
   text-anchor: end;
-  dominant-baseline: middle;
+  dominant-baseline: central;
 }
 
 .legend-value {
@@ -89,6 +89,9 @@ d3fc-canvas {
   pointer-events: none;
 }
 
+.y-axis {
+  width: 50px;
+}
 .border {
   border: 1px solid #bbb;
   grid-column: 3 / 5;

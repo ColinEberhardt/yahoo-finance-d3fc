@@ -168,7 +168,7 @@ const chart = fc
   .yTickFormat(priceFormat)
   .yTicks(5)
   // https://github.com/d3/d3-axis/issues/32
-  .yTickSize(40)
+  .yTickSize(47)
   .yDecorate(sel => sel.select("text").attr("transform", "translate(10, -8)"))
   .xDecorate(sel =>
     sel
