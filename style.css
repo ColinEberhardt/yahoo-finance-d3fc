@@ -25,7 +25,7 @@ path.ema {
 }
 
 .annotation-line.vertical {
-  stroke: #444;
+  stroke: #888 !important;
   stroke-width: 2px;
   stroke-dasharray: 3, 3;
 }
@@ -62,12 +62,14 @@ path.ema {
 .legend-value {
   font-size: 12px;
   font-family: sans-serif;
+  fill: #444;
 }
 
 .legend-label {
   text-anchor: end;
   font-size: 12px;
   font-family: sans-serif;
+  fill: #bbb;
 }
 
 d3fc-canvas {

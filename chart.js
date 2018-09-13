@@ -21,14 +21,14 @@ const loadDataEndOfDay = d3.csv("/yahoo.csv", d => ({
 }));
 
 const dateFormat = d3.timeFormat("%a %H:%M%p");
-const priceFormat = d3.format(".2f");
+const priceFormat = d3.format(",.2f");
 
 const legendData = datum => [
-  { name: "open", value: priceFormat(datum.open) },
-  { name: "high", value: priceFormat(datum.high) },
-  { name: "low", value: priceFormat(datum.low) },
-  { name: "close", value: priceFormat(datum.close) },
-  { name: "time", value: dateFormat(datum.date) }
+  { name: "Open", value: priceFormat(datum.open) },
+  { name: "High", value: priceFormat(datum.high) },
+  { name: "Low", value: priceFormat(datum.low) },
+  { name: "Close", value: priceFormat(datum.close) },
+  { name: "Volume", value: priceFormat(datum.volume) }
 ];
 
 const volumeSeries = fc
