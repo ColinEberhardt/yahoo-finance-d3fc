@@ -169,7 +169,7 @@ const chart = fc
   .yTicks(5)
   // https://github.com/d3/d3-axis/issues/32
   .yTickSize(47)
-  .yDecorate(sel => sel.select("text").attr("transform", "translate(10, -8)"))
+  .yDecorate(sel => sel.select("text").attr("transform", "translate(20, -8)"))
   .xDecorate(sel =>
     sel
       .select("text")
