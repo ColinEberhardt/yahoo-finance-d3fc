@@ -88,3 +88,14 @@ path.ema {
 d3fc-canvas {
   pointer-events: none;
 }
+
+.plot-area, .y-axis {
+  border-bottom: 1px solid #bbb;
+  border-top: 1px solid #bbb;
+}
+.plot-area {
+  border-left: 1px solid #bbb;
+}
+.y-axis {
+  /* border-right: 1px solid black; */
+}
