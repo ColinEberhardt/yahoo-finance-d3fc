@@ -1,3 +1,8 @@
+body {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-weight: 300;
+}
+
 path.area {
   fill: url(#area-gradient);
   fill-opacity: 1;
@@ -53,7 +58,6 @@ path.ema {
 
 .callout text {
   font-size: 10px;
-  font-family: sans-serif;
   fill: white;
   text-anchor: end;
   dominant-baseline: middle;
@@ -61,14 +65,12 @@ path.ema {
 
 .legend-value {
   font-size: 12px;
-  font-family: sans-serif;
   fill: #444;
 }
 
 .legend-label {
   text-anchor: end;
   font-size: 12px;
-  font-family: sans-serif;
   fill: #bbb;
 }
 
