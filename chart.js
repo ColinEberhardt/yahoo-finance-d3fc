@@ -63,7 +63,18 @@ const gridlines = fc
   .yTicks(5)
   .xTicks(0);
 
-const verticalAnnotation = fc.annotationSvgLine().orient("vertical");
+const verticalAnnotation = fc
+  .annotationSvgLine()
+  .orient("vertical")
+  .value(d => d.value)
+  .decorate(sel => {
+    sel
+      .enter()
+      .select(".bottom-handle")
+      .append("use")
+      .attr("transform", "translate(0, -20)")
+      .attr("xlink:href", d => d.type);
+  });
 
 const bands = fc
   .annotationSvgBand()
@@ -74,6 +85,15 @@ const bands = fc
 const chartLegend = legend();
 
 const crosshair = fc.annotationSvgCrosshair();
+
+const markersForDay = day => {
+  const openingHours = exchangeOpeningHours(day[0]);
+  return [
+    { type: "#pre", value: day[0] },
+    { type: "#active", value: openingHours[0] },
+    { type: "#post", value: openingHours[1] }
+  ];
+};
 
 const multi = fc
   .seriesSvgMulti()
@@ -99,9 +119,7 @@ const multi = fc
       case crosshair:
         return data.crosshair;
       case verticalAnnotation:
-        return flatten(
-          data.tradingHoursArray.map(d => [d[0], ...exchangeOpeningHours(d[0])])
-        );
+        return flatten(data.tradingHoursArray.map(markersForDay));
       case bands:
         return d3.pairs(
           data.tradingHoursArray.map(d => exchangeOpeningHours(d[0]))
