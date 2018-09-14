@@ -48,7 +48,8 @@ path.ema {
 }
 
 .annotation-band.vertical {
-  opacity: 0.04;
+  opacity: 0.3;
+  fill: white;
 }
 
 .annotation-crosshair .annotation-line.horizontal,
@@ -92,7 +93,9 @@ d3fc-canvas {
 
 .y-axis {
   width: 50px;
+  border-left: 1px solid #bbb;
 }
+
 .border {
   border: 1px solid #bbb;
   grid-column: 3 / 5;

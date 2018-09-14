@@ -109,9 +109,9 @@ const multi = fc
     movingAverageSeries,
     lineSeries,
     chartLegend,
-    crosshair,
+    bands,
     verticalAnnotation,
-    bands
+    crosshair,
   ])
   .mapping((data, index, series) => {
     const lastPoint = data[data.length - 1];
@@ -190,16 +190,14 @@ const chart = fc
           .select("svg")
           .call(yCallout);
       });
-    sel.enter()
+    sel
+      .enter()
       .append("div")
       .classed("border", true);
   });
 
 loadDataIntraday.then(data => {
-  data = data
-    .slice(0, 700)
-    // filter out any data that is > 2 hours outside of trading
-    .filter(d => d.date.getHours() > 7 && d.date.getHours() < 19);
+  data = data.slice(0, 700);
 
   // compute the moving average data
   const maData = ma(data);
