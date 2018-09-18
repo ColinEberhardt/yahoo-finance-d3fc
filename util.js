@@ -3,6 +3,11 @@ const exchangeOpeningHours = day => [
   new Date(day.getFullYear(), day.getMonth(), day.getDate(), 16, 0, 0)
 ];
 
+const isWithinOpeningHours = time => {
+  const openingHours = exchangeOpeningHours(time);
+  return time > openingHours[0] && time < openingHours[1];
+}
+
 const tradingHours = dates => {
   const getDateKey = date =>
     date.getMonth() + "-" + date.getDate() + "-" + date.getFullYear();

@@ -2,13 +2,13 @@
 # yarn lockfile v1
 
 
-"@d3fc/d3fc-annotation@^2.0.12":
-  version "2.0.12"
-  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-annotation/-/d3fc-annotation-2.0.12.tgz#2a23e8729f7bded1be3451198c2110434c0c1950"
+"@d3fc/d3fc-annotation@^2.0.13":
+  version "2.0.13"
+  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-annotation/-/d3fc-annotation-2.0.13.tgz#7b354c6557752d09dfb803a5ebd6caa186bcc9a4"
   dependencies:
     "@d3fc/d3fc-data-join" "^5.0.6"
     "@d3fc/d3fc-rebind" "^5.0.5"
-    "@d3fc/d3fc-series" "^4.0.10"
+    "@d3fc/d3fc-series" "^4.0.11"
     "@d3fc/d3fc-shape" "^5.0.6"
     d3-scale "^1.0.1"
     d3-selection "^1.0.2"
@@ -23,9 +23,9 @@
     d3-selection "^1.0.2"
     d3-shape "^1.0.3"
 
-"@d3fc/d3fc-brush@^2.0.18":
-  version "2.0.18"
-  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-brush/-/d3fc-brush-2.0.18.tgz#9b30733b2e6f2b3063329868df0b27ed44466179"
+"@d3fc/d3fc-brush@^2.0.19":
+  version "2.0.19"
+  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-brush/-/d3fc-brush-2.0.19.tgz#08022900a122d2bd183e073ce2f30572d17520f8"
   dependencies:
     "@d3fc/d3fc-data-join" "^5.0.6"
     "@d3fc/d3fc-rebind" "^5.0.5"
@@ -34,15 +34,15 @@
     d3-scale "^1.0.3"
     d3-selection "^1.0.2"
 
-"@d3fc/d3fc-chart@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-chart/-/d3fc-chart-2.1.0.tgz#66fd5a6906a17e331c11015d1259275b6e5675aa"
+"@d3fc/d3fc-chart@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-chart/-/d3fc-chart-2.1.1.tgz#d20a848c07c5bbc7742cf1e2b539dbeb7addcb2d"
   dependencies:
     "@d3fc/d3fc-axis" "^2.0.8"
     "@d3fc/d3fc-data-join" "^5.0.6"
-    "@d3fc/d3fc-element" "^5.1.1"
+    "@d3fc/d3fc-element" "^5.1.2"
     "@d3fc/d3fc-rebind" "^5.0.5"
-    "@d3fc/d3fc-series" "^4.0.10"
+    "@d3fc/d3fc-series" "^4.0.11"
     d3-scale "^1.0.3"
     d3-selection "^1.0.2"
 
@@ -60,9 +60,9 @@
     d3-scale "^1.0.0"
     d3-time "^1.0.0"
 
-"@d3fc/d3fc-element@^5.1.1":
-  version "5.1.1"
-  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-element/-/d3fc-element-5.1.1.tgz#c5a69be71e2295720e1e7ea35ef68bcf80bb3cd3"
+"@d3fc/d3fc-element@^5.1.2":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-element/-/d3fc-element-5.1.2.tgz#d90c7841c8a3f4ca55bde85e1fea1fa76765dc9f"
 
 "@d3fc/d3fc-extent@^3.1.1":
   version "3.1.1"
@@ -117,9 +117,9 @@
     "@d3fc/d3fc-rebind" "^5.0.5"
     d3-array "^1.0.0"
 
-"@d3fc/d3fc-series@^4.0.10":
-  version "4.0.10"
-  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-series/-/d3fc-series-4.0.10.tgz#10fa20b3fa00187de0c76df625e04adb8d4b5219"
+"@d3fc/d3fc-series@^4.0.11":
+  version "4.0.11"
+  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-series/-/d3fc-series-4.0.11.tgz#8be72b51e8ce260ebd6508d3900dd31a134ca963"
   dependencies:
     "@d3fc/d3fc-data-join" "^5.0.6"
     "@d3fc/d3fc-rebind" "^5.0.5"
@@ -135,9 +135,9 @@
   dependencies:
     d3-path "^1.0.0"
 
-"@d3fc/d3fc-technical-indicator@^7.0.12":
-  version "7.0.12"
-  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-technical-indicator/-/d3fc-technical-indicator-7.0.12.tgz#1d1747a1cab0b508dee730fa1765b409f925dcfe"
+"@d3fc/d3fc-technical-indicator@^7.0.13":
+  version "7.0.13"
+  resolved "https://registry.yarnpkg.com/@d3fc/d3fc-technical-indicator/-/d3fc-technical-indicator-7.0.13.tgz#c0adfc7a7de8a23569a22b45235deced90b7679f"
   dependencies:
     "@d3fc/d3fc-rebind" "^5.0.5"
     d3-array "^1.0.0"
@@ -378,17 +378,17 @@ d3@^5.6.0:
     d3-voronoi "1"
     d3-zoom "1"
 
-d3fc@14.0.19:
-  version "14.0.19"
-  resolved "https://registry.yarnpkg.com/d3fc/-/d3fc-14.0.19.tgz#65b1e85cecd5a4eb3cc05109e7f85cd45a69e225"
+d3fc@14.0.20:
+  version "14.0.20"
+  resolved "https://registry.yarnpkg.com/d3fc/-/d3fc-14.0.20.tgz#3019bb5ed2eb3f429da9bf6ba03fea98ec313608"
   dependencies:
-    "@d3fc/d3fc-annotation" "^2.0.12"
+    "@d3fc/d3fc-annotation" "^2.0.13"
     "@d3fc/d3fc-axis" "^2.0.8"
-    "@d3fc/d3fc-brush" "^2.0.18"
-    "@d3fc/d3fc-chart" "^2.1.0"
+    "@d3fc/d3fc-brush" "^2.0.19"
+    "@d3fc/d3fc-chart" "^2.1.1"
     "@d3fc/d3fc-data-join" "^5.0.6"
     "@d3fc/d3fc-discontinuous-scale" "^3.0.6"
-    "@d3fc/d3fc-element" "^5.1.1"
+    "@d3fc/d3fc-element" "^5.1.2"
     "@d3fc/d3fc-extent" "^3.1.1"
     "@d3fc/d3fc-financial-feed" "^5.0.6"
     "@d3fc/d3fc-group" "^2.0.5"
@@ -397,9 +397,9 @@ d3fc@14.0.19:
     "@d3fc/d3fc-random-data" "^3.0.6"
     "@d3fc/d3fc-rebind" "^5.0.5"
     "@d3fc/d3fc-sample" "^4.0.6"
-    "@d3fc/d3fc-series" "^4.0.10"
+    "@d3fc/d3fc-series" "^4.0.11"
     "@d3fc/d3fc-shape" "^5.0.6"
-    "@d3fc/d3fc-technical-indicator" "^7.0.12"
+    "@d3fc/d3fc-technical-indicator" "^7.0.13"
 
 iconv-lite@0.4:
   version "0.4.24"

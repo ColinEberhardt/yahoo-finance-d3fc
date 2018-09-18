@@ -44,6 +44,7 @@ const volumeSeries = fc
 
 const movingAverageSeries = fc
   .seriesSvgLine()
+  .defined(d => isWithinOpeningHours(d.date))
   .mainValue(d => d.ma)
   .crossValue(d => d.date)
   .decorate(sel => sel.enter().classed("ema", true));
@@ -111,7 +112,7 @@ const multi = fc
     chartLegend,
     bands,
     verticalAnnotation,
-    crosshair,
+    crosshair
   ])
   .mapping((data, index, series) => {
     const lastPoint = data[data.length - 1];
@@ -134,7 +135,10 @@ const multi = fc
     }
   });
 
-const ma = fc.indicatorMovingAverage().value(d => d.high);
+const ma = fc
+  .indicatorMovingAverage()
+  .value(d => d.high)
+  .period(15);
 
 const xExtent = fc.extentDate().accessors([d => d.date]);
 
@@ -197,7 +201,7 @@ const chart = fc
   });
 
 loadDataIntraday.then(data => {
-  data = data.slice(0, 700);
+  data = data.slice(0, 500);
 
   // compute the moving average data
   const maData = ma(data);
