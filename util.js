@@ -34,6 +34,6 @@ const closest = (arr, fn) =>
       index: 0,
       value: arr[0]
     }
-  );
+  ).value;
 
 const flatten = arr => [].concat.apply([], arr);

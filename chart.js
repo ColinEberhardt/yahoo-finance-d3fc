@@ -90,7 +90,10 @@ const bands = fc
 
 const chartLegend = legend();
 
-const crosshair = fc.annotationSvgCrosshair();
+const crosshair = fc
+  .annotationSvgCrosshair()
+  .x(d => xScale(d.date))
+  .y(d => yScale(d.high));
 
 const markersForDay = day => {
   const openingHours = exchangeOpeningHours(day[0]);
@@ -116,9 +119,7 @@ const multi = fc
   ])
   .mapping((data, index, series) => {
     const lastPoint = data[data.length - 1];
-    const legendValue = data.crosshair.length
-      ? data.crosshair[0].value
-      : lastPoint;
+    const legendValue = data.crosshair.length ? data.crosshair[0] : lastPoint;
     switch (series[index]) {
       case chartLegend:
         return legendData(legendValue);
@@ -243,21 +244,11 @@ loadDataIntraday.then(data => {
       .call(chart);
 
     const pointer = fc.pointer().on("point", event => {
-      if (event.length) {
-        const pointerDate = xScale.invert(event[0].x);
-        const close = closest(mergedData, d =>
-          Math.abs(pointerDate.getTime() - d.date.getTime())
-        );
-        mergedData.crosshair = [
-          {
-            x: xScale(close.value.date),
-            y: yScale(close.value.high),
-            value: close.value
-          }
-        ];
-      } else {
-        mergedData.crosshair = [];
-      }
+      mergedData.crosshair = event.map(pointer =>
+        closest(mergedData, d =>
+          Math.abs(xScale.invert(pointer.x).getTime() - d.date.getTime())
+        )
+      );
       render();
     });
 
