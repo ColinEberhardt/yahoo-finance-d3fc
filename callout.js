@@ -11,8 +11,11 @@ const callout = () => {
     selection.each((data, selectionIndex, nodes) => {
       // this component is tightly coupled to the shape of the input data, extracting
       // this high and moving average values from the last datapoint
-      const lastPoint = data[data.length - 1];
-      const calloutData = [lastPoint.high, lastPoint.ma];
+      let calloutData = [];
+      if (data.length) {
+        const lastPoint = data[data.length - 1];
+        const calloutData = [lastPoint.high, lastPoint.ma];
+      }
 
       const element = calloutJoin(
         d3.select(nodes[selectionIndex]),

@@ -118,10 +118,15 @@ const multi = fc
     crosshair
   ])
   .mapping((data, index, series) => {
-    const lastPoint = data[data.length - 1];
-    const legendValue = data.crosshair.length ? data.crosshair[0] : lastPoint;
+    if (data.loading) {
+      return [];
+    }
     switch (series[index]) {
       case chartLegend:
+        const lastPoint = data[data.length - 1];
+        const legendValue = data.crosshair.length
+          ? data.crosshair[0]
+          : lastPoint;
         return legendData(legendValue);
       case crosshair:
         return data.crosshair;
@@ -201,6 +206,29 @@ const chart = fc
       .classed("border", true);
   });
 
+let chartData = [];
+chartData.loading = true;
+
+const render = () => {
+  // select and render
+  d3.select("#chart-element")
+    .datum(chartData)
+    .call(chart);
+
+  const pointer = fc.pointer().on("point", event => {
+    chartData.crosshair = event.map(pointer =>
+      closest(chartData, d =>
+        Math.abs(xScale.invert(pointer.x).getTime() - d.date.getTime())
+      )
+    );
+    render();
+  });
+
+  d3.select("#chart-element .plot-area").call(pointer);
+};
+
+render();
+
 loadDataIntraday.then(data => {
   data = data.slice(0, 500);
 
@@ -208,8 +236,8 @@ loadDataIntraday.then(data => {
   const maData = ma(data);
 
   // merge into a single series
-  const mergedData = data.map((d, i) => ({ ma: maData[i], ...d }));
-  mergedData.crosshair = [];
+  chartData = data.map((d, i) => ({ ma: maData[i], ...d }));
+  chartData.crosshair = [];
 
   // compute the trading hours and use this to create our discontinuous scale
   const tradingHoursArray = tradingHours(data.map(d => d.date));
@@ -220,7 +248,7 @@ loadDataIntraday.then(data => {
 
   xScale.discontinuityProvider(fc.discontinuityRange(...discontinuities));
 
-  mergedData.tradingHoursArray = tradingHoursArray;
+  chartData.tradingHoursArray = tradingHoursArray;
 
   // set the domain based on the data
   const yDomain = yExtent(data);
@@ -237,22 +265,5 @@ loadDataIntraday.then(data => {
 
   areaSeries.baseValue(d => yDomain[0]);
 
-  const render = () => {
-    // select and render
-    d3.select("#chart-element")
-      .datum(mergedData)
-      .call(chart);
-
-    const pointer = fc.pointer().on("point", event => {
-      mergedData.crosshair = event.map(pointer =>
-        closest(mergedData, d =>
-          Math.abs(xScale.invert(pointer.x).getTime() - d.date.getTime())
-        )
-      );
-      render();
-    });
-
-    d3.select("#chart-element .plot-area").call(pointer);
-  };
   render();
 });
