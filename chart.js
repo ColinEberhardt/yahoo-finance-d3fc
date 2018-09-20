@@ -1,4 +1,4 @@
-const loadDataIntraday = d3.json("/yahoo.json").then(json => {
+const loadDataIntraday = d3.json("yahoo.json").then(json => {
   const chartData = json.chart.result[0];
   const quoteData = chartData.indicators.quote[0];
   return chartData.timestamp.map((d, i) => ({
@@ -11,7 +11,7 @@ const loadDataIntraday = d3.json("/yahoo.json").then(json => {
   }));
 });
 
-const loadDataEndOfDay = d3.csv("/yahoo.csv", d => ({
+const loadDataEndOfDay = d3.csv("yahoo.csv", d => ({
   date: new Date(d.Timestamp * 1000),
   volume: Number(d.volume),
   high: Number(d.high),
