@@ -1,13 +1,19 @@
 <!doctype html>
 
 <head>
-  <script src="node_modules/d3/dist/d3.js"></script>
-  <script src="node_modules/d3fc/build/d3fc.js"></script>
-  <script src="node_modules/babel-standalone/babel.min.js"></script>
+  <script src="lib/d3.min.js"></script>
+  <script src="lib/d3fc.min.js"></script>
+  <script src="lib/babel.min.js"></script>
   <link rel="stylesheet" type="text/css" href="style.css" />
+  <link rel='stylesheet' href='lib/bootstrap.min.css'>
 </head>
 
-<body>
+<body class='container'>
+  <div class='jumbotron'>
+    <h1>Financial chart with D3 and d3fc</h3>
+    <p>A complex financial chart rendered using D3 and <a href="https://d3fc.io/">d3fc</a>, source code
+      can be found on <a href="https://github.com/ColinEberhardt/yahoo-finance-d3fc">GitHub</a>.</p>
+  </div>
 
   <div id="chart-element" style="height: 500px"></div>
 
