@@ -1,9 +1,15 @@
 <!doctype html>
 
 <head>
+  <!-- include polyfills for custom event, Symbol and Custom Elements -->
+  <script src="//unpkg.com/babel-polyfill@6.26.0/dist/polyfill.js"></script>
+  <script src="//unpkg.com/custom-event-polyfill@0.3.0/custom-event-polyfill.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/document-register-element/1.8.0/document-register-element.js"></script>
+
   <script src="lib/d3.min.js"></script>
   <script src="lib/d3fc.min.js"></script>
   <script src="lib/babel.min.js"></script>
+
   <link rel="stylesheet" type="text/css" href="style.css" />
   <link rel='stylesheet' href='lib/bootstrap.min.css'>
 </head>
@@ -12,7 +18,9 @@
   <div class='jumbotron'>
     <h1>Financial chart with D3 and d3fc</h3>
     <p>A complex financial chart rendered using D3 and <a href="https://d3fc.io/">d3fc</a>, source code
-      can be found on <a href="https://github.com/ColinEberhardt/yahoo-finance-d3fc">GitHub</a>.</p>
+      can be found on <a href="https://github.com/ColinEberhardt/yahoo-finance-d3fc">GitHub</a>.
+      For a detailed step-by-step description of how this chart was built, see the
+      <a href="https://blog.scottlogic.com/2018/09/21/d3-financial-chart.html"></a>following blog post</a></p>
   </div>
 
   <div id="chart-element" style="height: 500px"></div>
